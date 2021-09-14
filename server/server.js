@@ -9,12 +9,6 @@ const server = new ApolloServer({
     resolvers
 });
 
-// server.applyMiddleware({ app });
-
-// app.use(express.urlencoded({ extended: false }));
-// app.use(express.json());
-
-
 db.once('open', () => {
     server.listen(PORT, () => {
         console.log(`API server running on port ${PORT}`);
