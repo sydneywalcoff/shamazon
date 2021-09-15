@@ -10,6 +10,18 @@ const resolvers = {
             const user = await User.create(args);
 
             return user;
+        },
+        login: async (_, { username, password }) => {
+            const user =  await User.findOne({ username });
+            if(!user) {
+                return new AuthenticationError('Wrong credentials!');
+            }
+
+            const correctPw = await user.isCorrectPassword(password);
+            if(!correctPw) {
+                throw new AuthenticationError('Wrong credentials!');
+            }
+            return user;
         }
     }
 };
