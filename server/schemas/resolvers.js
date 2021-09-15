@@ -1,5 +1,6 @@
 const { AuthenticationError } = require('apollo-server-express');
 const { User } = require('../models');
+const { signToken } = require('../utils/auth');
 
 const resolvers = {
     // Query: {
@@ -8,8 +9,9 @@ const resolvers = {
     Mutation: {
         addUser: async (_, args) => {
             const user = await User.create(args);
+            const token = signToken(user);
 
-            return user;
+            return { user, token };
         },
         login: async (_, { username, password }) => {
             const user =  await User.findOne({ username });
@@ -21,7 +23,8 @@ const resolvers = {
             if(!correctPw) {
                 throw new AuthenticationError('Wrong credentials!');
             }
-            return user;
+            const token = signToken(user);
+            return { user, token };
         }
     }
 };
