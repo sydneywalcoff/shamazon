@@ -7,8 +7,8 @@ const resolvers = {
         me: async(_, args, context) => {
             if(context.user) {
                 const me = await User.findById(context.user._id);
-
-                user.orders.sort((a,b) => b.purchaseDate = a.purchaseDate);
+                
+                me.orders.sort((a,b) => b.purchaseDate = a.purchaseDate);
                 return me;
             }
         },
