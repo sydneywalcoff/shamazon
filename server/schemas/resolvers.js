@@ -33,12 +33,12 @@ const resolvers = {
         order: async(_, { _id }, context) => {
             if(context.user){
                 const user = await User.findById(context.user._id).populate({
-                    path: 'order.products',
-                    populate: 'name'
+                    path: 'orders.order',
+                    populate: 'pr'
                 });
                 const order = user.orders.filter(()=> id = _id );
                 console.log(order)
-                return order;
+                return order[0];
             }
             return new AuthenticationError('Not logged in :(');
         }
