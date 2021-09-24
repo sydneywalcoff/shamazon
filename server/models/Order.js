@@ -1,15 +1,15 @@
 const { Schema, Types, model } = require('mongoose');
-const { Product } = require('../models')
+// const { Product } = require('../models')
 
 const orderSchema = new Schema({
     purchaseDate: {
         type: Date,
-        default: Date.now
+        default: new Date()
     },
     products: [
         {
             type: Types.ObjectId,
-            ref: Product
+            ref: 'Product'
         }
     ]
 });
