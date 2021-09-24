@@ -5,8 +5,8 @@ const resolvers = {
     Query: {
         me: async(_, args, context) => {
             if(context.user) {
-                const me = await User.findById(context.user._id);
-                
+                const me = await User.findById(context.user._id)
+                    .select('-__v -password');
                 me.orders.sort((a,b) => b.purchaseDate - a.purchaseDate);
                 return me;
             }
@@ -24,21 +24,22 @@ const resolvers = {
                     $regex: name
                 }
             }
-            return await Product.find(params).populate('category');
+            return await Product.find(params).select('-__v').populate('category');
         },
         product: async(_, { _id }) => {
-            return await Product.findById(_id).populate('category');
+            return await Product.findById(_id).select('-__v').populate('category');
         },
         order: async(_, { _id }, context) => {
             if(context.user){
-                const order = await Order.findById({ _id });
+                const order = await Order.findById({ _id }).select('-__v').populate('products');
                 return order;
             }
             return new AuthenticationError('Not logged in :(');
         },
-        // orders: async(_, args) => {
-        //     const 
-        // }
+        orders: async(_, args) => {
+            const orders = await Order.find().select('-__v').populate('products');
+            return orders;
+        }
     },
     Mutation: {
         addUser: async (_, args) => {
@@ -48,7 +49,7 @@ const resolvers = {
             return { user, token };
         },
         login: async (_, { username, password }) => {
-            const user =  await User.findOne({ username });
+            const user =  await User.findOne({ username }).select('-__v -password');
             if(!user) {
                 return new AuthenticationError('Wrong credentials!');
             }
@@ -63,9 +64,8 @@ const resolvers = {
         addOrder: async (_, { products }, context) => {
             if(context.user) {
                 const order = await Order.create({ products });
-                console.log(order)
                 await User.findByIdAndUpdate(context.user._id, { $push: { orders: order } });
-                return order;
+                return order.populate('products');
             }
             return new AuthenticationError('Not logged in, my dude');
         }
