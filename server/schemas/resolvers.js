@@ -1,7 +1,6 @@
 const { AuthenticationError } = require('apollo-server-express');
 const { User, Category, Product, Order } = require('../models');
 const { signToken } = require('../utils/auth');
-
 const resolvers = {
     Query: {
         me: async(_, args, context) => {
@@ -32,16 +31,14 @@ const resolvers = {
         },
         order: async(_, { _id }, context) => {
             if(context.user){
-                const user = await User.findById(context.user._id).populate({
-                    path: 'orders.order',
-                    populate: 'pr'
-                });
-                const order = user.orders.filter(()=> id = _id );
-                console.log(order)
-                return order[0];
+                const order = await Order.findById({ _id });
+                return order;
             }
             return new AuthenticationError('Not logged in :(');
-        }
+        },
+        // orders: async(_, args) => {
+        //     const 
+        // }
     },
     Mutation: {
         addUser: async (_, args) => {
@@ -65,7 +62,8 @@ const resolvers = {
         },
         addOrder: async (_, { products }, context) => {
             if(context.user) {
-                const order = new Order({ products });
+                const order = await Order.create({ products });
+                console.log(order)
                 await User.findByIdAndUpdate(context.user._id, { $push: { orders: order } });
                 return order;
             }

@@ -16,7 +16,7 @@ db.once('open', async () => {
 
     await Product.deleteMany();
 
-    const products = await Product.insertMany([
+    const products = await Product.create([
         {
             name: 'Nintendo Switch',
             description: 'The Nintendo Switch is a video game console developed by Nintendo and released worldwide in most regions on March 3, 2017. The console itself is a tablet that can either be docked for use as a home console or used as a portable device, making it a hybrid console.',

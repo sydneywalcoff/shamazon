@@ -40,6 +40,7 @@ const typeDefs = gql`
         products(category: ID, name: String): [Product]
         product(_id: ID!): Product
         order(_id: ID!): Order
+        orders: [Order]
     }
 
     type Mutation {
