@@ -1,16 +1,18 @@
-const express = require('express');
+const { ApolloServer} = require('apollo-server');
 
 const db = require('./config/connection');
+const { typeDefs, resolvers } = require('./schemas');
+const { authMiddleware } = require('./utils/auth');
 
 const PORT = process.env.PORT || 3001;
-const app = express();
-
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-
+const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: authMiddleware
+});
 
 db.once('open', () => {
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
         console.log(`API server running on port ${PORT}`);
     })
 })
